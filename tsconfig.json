@@ -28,7 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "global.d.ts"
+    "global.d.ts",
+    "src/utils/testConnection.mjs"
   ],
   "exclude": ["node_modules"]
 }
