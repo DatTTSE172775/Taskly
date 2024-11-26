@@ -1,8 +1,22 @@
-export default function TasksPage() {
+"use client";
+
+import TaskAddButton from "@/components/user/tasks/addTask/TaskAddButton";
+import TaskList from "@/components/user/tasks/list/TaskList";
+import React from "react";
+
+const TaskPage: React.FC = () => {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">This is the Tasks Page</h1>
-      <p className="mt-2 text-gray-600">Here you can manage your tasks!</p>
+    <div className="p-6">
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Taskly</h1>
+        <TaskAddButton />
+      </div>
+
+      {/* Task List */}
+      <TaskList />
     </div>
   );
-}
+};
+
+export default TaskPage;

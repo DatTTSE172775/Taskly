@@ -7,11 +7,6 @@ const Sidebar = () => {
       <ul className="space-y-2">
         <li>
           <a href="/tasks" className="block p-2 hover:bg-blue-700">
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a href="/tasks" className="block p-2 hover:bg-blue-700">
             Tasks
           </a>
         </li>
