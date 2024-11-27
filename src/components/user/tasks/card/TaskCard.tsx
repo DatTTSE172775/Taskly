@@ -2,14 +2,15 @@
 
 import { format } from "date-fns";
 import React from "react";
-import { FiEdit2 } from "react-icons/fi"; // Import icon chỉnh sửa từ react-icons
+import { FiEdit2, FiTrash2 } from "react-icons/fi"; // Import icon chỉnh sửa từ react-icons
 
 interface TaskCardProps {
   title: string;
   description: string;
   status: "Pending" | "In Progress" | "Completed";
   createdAt: string;
-  onEdit: () => void; // Callback để chỉnh sửa
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
@@ -18,6 +19,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   status,
   createdAt,
   onEdit,
+  onDelete,
 }) => {
   const getStatusColor = () => {
     switch (status) {
@@ -50,10 +52,19 @@ const TaskCard: React.FC<TaskCardProps> = ({
       {/* Icon chỉnh sửa */}
       <button
         onClick={onEdit}
-        className="absolute top-2 right-2 text-gray-500 hover:text-blue-500"
+        className="absolute top-2 right-10 text-gray-500 hover:text-blue-500"
         title="Edit Task"
       >
         <FiEdit2 className="w-5 h-5" />
+      </button>
+
+      {/* Icon xóa */}
+      <button
+        onClick={onDelete}
+        className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+        title="Delete Task"
+      >
+        <FiTrash2 className="w-5 h-5" />
       </button>
 
       {/* Title */}

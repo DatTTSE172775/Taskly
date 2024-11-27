@@ -7,7 +7,6 @@ export async function GET() {
   try {
     await dbConnect();
     const tasks = await Task.find({});
-    console.log("Tasks fetched from DB:", tasks);
     if (!Array.isArray(tasks)) {
       throw new Error("Database did not return an array");
     }

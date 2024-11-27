@@ -59,6 +59,18 @@ const taskReducer = (state = initialState, action: Action): TaskState => {
     case "UPDATE_TASK_FAILURE":
       return { ...state, loading: false, error: action.payload as string };
 
+    case "DELETE_TASK_REQUEST":
+      return { ...state, loading: true, error: null };
+    case "DELETE_TASK_SUCCESS":
+      return {
+        ...state,
+        tasks: state.tasks.filter((task) => task._id !== action.payload),
+        loading: false,
+        error: null,
+      };
+    case "DELETE_TASK_FAILURE":
+      return { ...state, loading: false, error: action.payload as string };
+
     default:
       return state;
   }

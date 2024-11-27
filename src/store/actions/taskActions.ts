@@ -95,3 +95,33 @@ export const updateTask =
       });
     }
   };
+
+export const deleteTask = (id: string) => async (dispatch: AppDispatch) => {
+  try {
+    dispatch({ type: "DELETE_TASK_REQUEST" });
+
+    const response = await fetch(`/api/tasks/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Failed to delete task");
+    }
+
+    dispatch({
+      type: "DELETE_TASK_SUCCESS",
+      payload: id, // Chỉ cần truyền ID task đã xóa
+    });
+  } catch (error) {
+    dispatch({
+      type: "DELETE_TASK_FAILURE",
+      payload: (error as Error).message,
+    });
+  }
+};
