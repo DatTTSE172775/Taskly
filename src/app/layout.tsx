@@ -1,6 +1,6 @@
+import NotificationList from "@/components/tools/NotificationList";
+import { NotificationProvider } from "@/hooks/useNotification";
 import { Providers } from "@/store/Providers";
-import { ConfigProvider } from "antd";
-import "antd/dist/reset.css"; // Import Ant Design styles
 import "./globals.css";
 
 export const metadata = {
@@ -17,10 +17,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {/* Bao bọc ứng dụng bằng Providers */}
-
-        <Providers>
-          <ConfigProvider>{children}</ConfigProvider>
-        </Providers>
+        <NotificationProvider>
+          <Providers>
+            <NotificationList />
+            {children}
+          </Providers>
+        </NotificationProvider>
       </body>
     </html>
   );

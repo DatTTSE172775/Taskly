@@ -79,6 +79,11 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  /* Notification shadow and transitions */
+  .alert {
+    transition: opacity 0.3s ease-in-out;
+  }
 }
 
 @layer base {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useNotification } from "@/hooks/useNotification";
 import { AppDispatch, RootState } from "@/store";
 import { deleteTask, fetchTasks, Task } from "@/store/actions/taskActions";
 import React, { useEffect, useState } from "react";
@@ -14,6 +15,9 @@ const TaskList: React.FC = () => {
   const { tasks, loading, error } = useSelector(
     (state: RootState) => state.tasks
   );
+
+  // Notification hook
+  const { addNotification } = useNotification();
 
   // States for update and delete modals
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -44,12 +48,21 @@ const TaskList: React.FC = () => {
     if (!taskToDelete) return; // Prevent null errors
     try {
       await dispatch(deleteTask(taskToDelete._id!.toString()));
+      // Thêm thông báo thành công
+      addNotification(
+        "success",
+        "Xóa thành công",
+        `Task "${taskToDelete.title}" đã được xóa.`
+      );
       setTaskToDelete(null);
       setIsDeleteModalOpen(false);
-      alert(`Task "${taskToDelete.title}" has been successfully deleted.`);
-    } catch (error) {
-      alert(`Failed to delete task "${taskToDelete.title}".`);
-      console.error(error);
+    } catch {
+      // Thêm thông báo lỗi
+      addNotification(
+        "error",
+        "Xóa thất bại",
+        `Xóa task "${taskToDelete.title} thất bại".`
+      );
     }
   };
 
@@ -67,12 +80,9 @@ const TaskList: React.FC = () => {
     return <div>Error loading tasks: {error}</div>;
   }
 
-  if (!tasks || tasks.length === 0) {
-    return <div>No tasks available</div>;
-  }
-
   return (
     <div className="p-4">
+      {/* Hiển thị danh sách thông báo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tasks.map((task, index) => (
           <TaskCard
