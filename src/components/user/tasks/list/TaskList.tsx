@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import LoadingOverlay from "@/components/ui/loading";
+import { useLoading } from "@/hooks/useLoading";
 import { useNotification } from "@/hooks/useNotification";
 import { AppDispatch, RootState } from "@/store";
 import { deleteTask, fetchTasks, Task } from "@/store/actions/taskActions";
@@ -19,6 +22,9 @@ const TaskList: React.FC = () => {
   // Notification hook
   const { addNotification } = useNotification();
 
+  //Loading hoook
+  const { isLoading, startLoading, stopLoading } = useLoading();
+
   // States for update and delete modals
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
@@ -26,8 +32,11 @@ const TaskList: React.FC = () => {
 
   // Fetch tasks from API
   useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
+    startLoading(); // Bắt đầu hiển thị loading
+    dispatch(fetchTasks()).finally(() => {
+      stopLoading(); // Kết thúc hiển thị loading
+    });
+  }, [dispatch]); // Chỉ phụ thuộc vào `dispatch`
 
   // Handle update task
   const handleEditTask = (task: Task) => {
@@ -72,16 +81,14 @@ const TaskList: React.FC = () => {
   };
 
   // Render UI
-  if (loading) {
-    return <div>Loading tasks...</div>;
-  }
-
   if (error) {
     return <div>Error loading tasks: {error}</div>;
   }
 
   return (
     <div className="p-4">
+      <LoadingOverlay isLoading={isLoading || loading} />{" "}
+      {/* Hiển thị loading khi cần */}
       {/* Hiển thị danh sách thông báo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tasks.map((task, index) => (

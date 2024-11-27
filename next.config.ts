@@ -2,6 +2,7 @@
 const nextConfig = {
   assetPrefix: "./",
   reactStrictMode: true,
+  productionBrowserSourceMaps: true,
 };
 
 module.exports = nextConfig;
