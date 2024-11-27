@@ -1,7 +1,7 @@
 "use client";
 
-import TaskAddButton from "@/components/user/tasks/addTask/TaskAddButton";
 import TaskList from "@/components/user/tasks/list/TaskList";
+import TaskAddButton from "@/components/user/tasks/modifyTasks/TaskAddButton";
 import React from "react";
 
 const TaskPage: React.FC = () => {

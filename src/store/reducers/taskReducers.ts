@@ -43,6 +43,22 @@ const taskReducer = (state = initialState, action: Action): TaskState => {
     case "ADD_TASK_FAILURE":
       return { ...state, loading: false, error: action.payload as string };
 
+    case "UPDATE_TASK_REQUEST":
+      return { ...state, loading: true, error: null };
+    case "UPDATE_TASK_SUCCESS":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task._id === (action.payload as Task)._id
+            ? (action.payload as Task)
+            : task
+        ),
+        loading: false,
+        error: null,
+      };
+    case "UPDATE_TASK_FAILURE":
+      return { ...state, loading: false, error: action.payload as string };
+
     default:
       return state;
   }

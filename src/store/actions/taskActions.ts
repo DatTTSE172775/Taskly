@@ -60,3 +60,38 @@ export const addTask = (task: Task) => async (dispatch: AppDispatch) => {
     });
   }
 };
+
+export const updateTask =
+  (id: string, updates: Partial<Task>) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch({ type: "UPDATE_TASK_REQUEST" });
+
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "Failed to update task");
+      }
+
+      dispatch({
+        type: "UPDATE_TASK_SUCCESS",
+        payload: data.data, // Updated task from API
+      });
+    } catch (error) {
+      dispatch({
+        type: "UPDATE_TASK_FAILURE",
+        payload: (error as Error).message,
+      });
+    }
+  };
