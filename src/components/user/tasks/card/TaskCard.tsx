@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import React from "react";
 import { FiEdit2 } from "react-icons/fi"; // Import icon chỉnh sửa từ react-icons
 
@@ -31,6 +32,19 @@ const TaskCard: React.FC<TaskCardProps> = ({
     }
   };
 
+  // Format the date
+  const formatDate = (dateString: string | Date) => {
+    try {
+      const date =
+        typeof dateString === "string" ? new Date(dateString) : dateString; // Chuyển đổi nếu là chuỗi
+      return isNaN(date.getTime())
+        ? "Invalid Date"
+        : format(date, "dd/MM/yyyy");
+    } catch {
+      return "Invalid Date"; // Fallback nếu lỗi
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 relative">
       {/* Icon chỉnh sửa */}
@@ -55,7 +69,9 @@ const TaskCard: React.FC<TaskCardProps> = ({
         >
           {status}
         </span>
-        <span className="text-sm text-gray-500">Created: {createdAt}</span>
+        <span className="text-sm text-gray-500">
+          Created: {formatDate(createdAt)}
+        </span>
       </div>
     </div>
   );

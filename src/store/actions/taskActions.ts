@@ -1,7 +1,7 @@
 import { AppDispatch } from "../index";
 
 export interface Task {
-  id?: number;
+  _id?: number;
   title: string;
   description: string;
   status: "Pending" | "In Progress" | "Completed";
@@ -12,12 +12,21 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "FETCH_TASKS_REQUEST" });
 
-    const response = await fetch("/tasks");
-    const data: Task[] = await response.json();
+    const response = await fetch("/api/tasks");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
+    const data = await response.json();
+
+    if (!data.success || !Array.isArray(data.data)) {
+      throw new Error("API response is invalid or data is not an array");
+    }
+
+    // Chỉ gán data.data vào payload
     dispatch({
       type: "FETCH_TASKS_SUCCESS",
-      payload: data,
+      payload: data.data,
     });
   } catch (error) {
     dispatch({
@@ -31,18 +40,18 @@ export const addTask = (task: Task) => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "ADD_TASK_REQUEST" });
 
-    const response = await fetch("/tasks", {
+    const response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(task),
     });
-    const data: Task = await response.json();
+    const data = await response.json();
 
     dispatch({
       type: "ADD_TASK_SUCCESS",
-      payload: data,
+      payload: data.data,
     });
   } catch (error) {
     dispatch({

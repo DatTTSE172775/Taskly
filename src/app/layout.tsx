@@ -1,3 +1,4 @@
+import { Providers } from "@/store/Providers";
 import "./globals.css";
 
 export const metadata = {
@@ -13,8 +14,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Đây là layout chung */}
-        {children}
+        {/* Bao bọc ứng dụng bằng Providers */}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

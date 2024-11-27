@@ -32,11 +32,6 @@ async function dbConnect() {
     cached.conn = await cached.promise;
     return cached.conn;
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Lỗi không xác định.";
-    if (error.stack) {
-      console.error("- Stack trace:", error.stack);
-    }
     throw error; // Ném lỗi ra ngoài nếu cần debug thêm
   }
 }

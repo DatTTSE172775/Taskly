@@ -1,15 +1,24 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { AppDispatch } from "@/store";
+import { addTask, fetchTasks } from "@/store/actions/taskActions";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const TaskAddButton: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    status: "Pending" | "In Progress" | "Completed";
+  }>({
     title: "",
     description: "",
     status: "Pending",
   });
+
+  const dispatch: AppDispatch = useDispatch();
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -20,12 +29,27 @@ const TaskAddButton: React.FC = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Task added:", formData);
-    // Clear the form and close modal
-    setFormData({ title: "", description: "", status: "Pending" });
-    setIsFormOpen(false);
+
+    //call api addTask through Redux
+    try {
+      await dispatch(
+        addTask({
+          title: formData.title,
+          description: formData.description,
+          status: formData.status,
+        })
+      );
+
+      dispatch(fetchTasks()); // Fetch tasks again to update the list
+
+      // Clear the form and close modal
+      setFormData({ title: "", description: "", status: "Pending" });
+      setIsFormOpen(false);
+    } catch (error) {
+      console.error("Failed to add task:", error);
+    }
   };
 
   return (

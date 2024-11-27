@@ -1,64 +1,52 @@
 "use client";
 
-import React from "react";
+import { AppDispatch, RootState } from "@/store";
+import { fetchTasks } from "@/store/actions/taskActions";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import TaskCard from "../card/TaskCard";
 
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  status: "Pending" | "In Progress" | "Completed";
-  createdAt: string;
-}
-
 const TaskList: React.FC = () => {
-  // Dummy data for tasks
-  const tasks: Task[] = [
-    {
-      id: 1,
-      title: "Design Homepage",
-      description: "Create the homepage design for the new project.",
-      status: "In Progress",
-      createdAt: "2024-11-25",
-    },
-    {
-      id: 2,
-      title: "Fix Bug #123",
-      description: "Resolve the login issue reported by QA team.",
-      status: "Pending",
-      createdAt: "2024-11-23",
-    },
-    {
-      id: 3,
-      title: "Write API Documentation",
-      description: "Complete documentation for the payment gateway APIs.",
-      status: "Completed",
-      createdAt: "2024-11-20",
-    },
-    {
-      id: 4,
-      title: "Prepare Demo",
-      description: "Prepare the demo for client presentation next week.",
-      status: "Pending",
-      createdAt: "2024-11-22",
-    },
-  ];
+  const dispatch: AppDispatch = useDispatch();
 
-  const handleEditTask = (id: number) => {
-    console.log(`Edit task with ID: ${id}`);
+  // get state from Redux store
+  const { tasks, loading, error } = useSelector(
+    (state: RootState) => state.tasks
+  );
+
+  //fetch tasks from API
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
+
+  const handleEditTask = (_id: number) => {
+    console.log(`Edit task with ID: ${_id}`);
   };
+
+  // Render UI
+  if (loading) {
+    return <div>Loading tasks...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading tasks: {error}</div>;
+  }
+
+  if (!tasks || tasks.length === 0) {
+    return <div>No tasks available</div>;
+  }
 
   return (
     <div className="p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tasks.map((task) => (
+        {tasks.map((task, index) => (
           <TaskCard
-            key={task.id}
+            key={task._id ?? index}
             title={task.title}
             description={task.description}
             status={task.status}
-            createdAt={task.createdAt}
-            onEdit={() => handleEditTask(task.id)}
+            createdAt={task.createdAt ?? ""}
+            onEdit={() => task._id !== undefined && handleEditTask(task._id)}
           />
         ))}
       </div>

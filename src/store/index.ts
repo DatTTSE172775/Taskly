@@ -1,14 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import taskReducer from "./reducers/taskReducers";
+import tasksReducer from "./reducers/taskReducers";
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
-    task: taskReducer,
+    tasks: tasksReducer,
   },
 });
 
 // Định nghĩa kiểu RootState và AppDispatch
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export default store;

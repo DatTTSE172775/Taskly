@@ -7,20 +7,17 @@ export default function UserLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="flex bg-gray-100 min-h-screen">
-        {/* Sidebar */}
-        <Sidebar />
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <Header />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <Header />
-
-          {/* Main Content Area */}
-          <main className="flex-1 p-6">{children}</main>
-        </div>
-      </body>
-    </html>
+        <main className="p-6 flex-1">{children}</main>
+      </div>
+    </div>
   );
 }
