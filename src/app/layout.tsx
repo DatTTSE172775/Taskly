@@ -1,3 +1,4 @@
+import GuestNavigation from "@/components/tools/GuestNavigation";
 import NotificationList from "@/components/tools/NotificationList";
 import { NotificationProvider } from "@/hooks/useNotification";
 import { Providers } from "@/store/Providers";
@@ -20,6 +21,8 @@ export default function RootLayout({
         <NotificationProvider>
           <Providers>
             <NotificationList />
+            {/* Hiển thị Navigation nếu là trang guest */}
+            {<GuestNavigation />}
             {children}
           </Providers>
         </NotificationProvider>

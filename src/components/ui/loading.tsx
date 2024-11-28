@@ -10,7 +10,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isLoading }) => {
   if (!isLoading) return null; // Không hiển thị nếu isLoading = false
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-[9999]">
       <div className="flex flex-col items-center animate-fade-in">
         <div className="relative">
           {/* Spinner */}
