@@ -3,7 +3,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLoading } from "@/hooks/useLoading";
+import { AppDispatch } from "@/store";
+import { loginUser } from "@/store/actions/authActions";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -11,7 +15,9 @@ export default function LoginForm() {
     password: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const [isSubmitting] = useState(false);
+  const { isLoading, startLoading, stopLoading } = useLoading();
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,18 +31,14 @@ export default function LoginForm() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    startLoading();
 
     try {
-      // Call your API for login
-      console.log("Logging in:", formData);
-
-      // Simulate API response delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await dispatch(loginUser(formData));
     } catch (error) {
       console.error("Đăng nhập thất bại: ", error);
     } finally {
-      setIsSubmitting(false);
+      stopLoading();
     }
   };
 
@@ -85,7 +87,7 @@ export default function LoginForm() {
         size="lg"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
+        {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
       </Button>
     </form>
   );
