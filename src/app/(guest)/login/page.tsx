@@ -1,8 +1,9 @@
+import LoginForm from "@/components/guest/auth/login/LoginForm";
+
 export default function Login() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Login</h1>
-      <p className="mt-4 text-gray-600">Please login to manage your tasks.</p>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <LoginForm />
     </div>
   );
 }
