@@ -1,7 +1,7 @@
 import GuestNavigation from "@/components/tools/GuestNavigation";
-import NotificationList from "@/components/tools/NotificationList";
-import { NotificationProvider } from "@/hooks/useNotification";
 import { Providers } from "@/store/Providers";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 export const metadata = {
@@ -18,14 +18,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {/* Bao bọc ứng dụng bằng Providers */}
-        <NotificationProvider>
-          <Providers>
-            <NotificationList />
-            {/* Hiển thị Navigation nếu là trang guest */}
-            {<GuestNavigation />}
-            {children}
-          </Providers>
-        </NotificationProvider>
+        <Providers>
+          {/* Hiển thị Navigation nếu là trang guest */}
+          {<GuestNavigation />}
+          {children}
+          <ToastContainer position="bottom-right" autoClose={3000} />
+        </Providers>
       </body>
     </html>
   );

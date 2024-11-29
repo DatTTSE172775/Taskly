@@ -3,8 +3,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNotification } from "@/hooks/useNotification";
+import { useLoading } from "@/hooks/useLoading";
+import { AppDispatch } from "@/store";
+import { registerUser } from "@/store/actions/authActions";
 import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -14,8 +18,8 @@ export default function RegisterForm() {
     password: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addNotification } = useNotification();
+  const dispatch: AppDispatch = useDispatch();
+  const { isLoading, startLoading, stopLoading } = useLoading();
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,31 +33,16 @@ export default function RegisterForm() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+
+    if (isLoading) return;
+    startLoading();
 
     try {
-      // Call your API
-      console.log("Submitting:", formData);
-
-      // Simulate API response delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      addNotification(
-        "success",
-        "Đăng ký Thành công",
-        `Tài khoản đã được đăng ký thành công.`
-      );
+      await dispatch(registerUser(formData));
     } catch (error) {
-      console.error("Đăng ký thất bại:", error);
-      addNotification(
-        "error",
-        "Đăng ký thất bại",
-        `Lỗi xảy ra khi đăng ký tài khoản: ${
-          (error as any).message
-        }. Vui lòng thử lại.`
-      );
+      console.error("Đăng ký thất bại: ", error);
     } finally {
-      setIsSubmitting(false);
+      stopLoading();
     }
   };
 
@@ -62,18 +51,18 @@ export default function RegisterForm() {
       onSubmit={handleSubmit}
       className="mx-auto w-full max-w-md space-y-4 bg-white p-6 shadow-md rounded-md"
     >
-      <h1 className="text-xl font-semibold text-center">Create an Account</h1>
+      <h1 className="text-xl font-semibold text-center">Đăng ký tài khoản</h1>
 
       {/* Username Field */}
       <div className="flex flex-col space-y-1">
         <label htmlFor="username" className="text-sm font-medium">
-          Username
+          Tên đăng nhập
         </label>
         <Input
           id="username"
           name="username"
           type="text"
-          placeholder="Enter your username"
+          placeholder="Nhập tên đăng nhập"
           value={formData.username}
           onChange={handleChange}
         />
@@ -82,13 +71,13 @@ export default function RegisterForm() {
       {/* Fullname Field */}
       <div className="flex flex-col space-y-1">
         <label htmlFor="fullname" className="text-sm font-medium">
-          Fullname
+          Họ và tên
         </label>
         <Input
           id="fullname"
           name="fullname"
           type="text"
-          placeholder="Enter your fullname"
+          placeholder="Nhập họ và tên"
           value={formData.fullname}
           onChange={handleChange}
         />
@@ -103,7 +92,7 @@ export default function RegisterForm() {
           id="email"
           name="email"
           type="email"
-          placeholder="Enter your email"
+          placeholder="Nhập email"
           value={formData.email}
           onChange={handleChange}
         />
@@ -112,13 +101,13 @@ export default function RegisterForm() {
       {/* Password Field */}
       <div className="flex flex-col space-y-1">
         <label htmlFor="password" className="text-sm font-medium">
-          Password
+          Mật khẩu
         </label>
         <Input
           id="password"
           name="password"
           type="password"
-          placeholder="Enter your password"
+          placeholder="Nhập mật khẩu"
           value={formData.password}
           onChange={handleChange}
         />
@@ -130,9 +119,9 @@ export default function RegisterForm() {
         className="w-full"
         variant="default"
         size="lg"
-        disabled={isSubmitting}
+        disabled={isLoading}
       >
-        {isSubmitting ? "Đang đăng ký..." : "Đăng ký"}
+        {isLoading ? "Đang đăng ký..." : "Đăng ký"}
       </Button>
     </form>
   );

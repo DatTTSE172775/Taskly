@@ -1,15 +1,14 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useNotification } from "@/hooks/useNotification";
 import { AppDispatch } from "@/store";
 import { addTask, fetchTasks } from "@/store/actions/taskActions";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const TaskAddButton: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const { addNotification } = useNotification();
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
@@ -44,11 +43,7 @@ const TaskAddButton: React.FC = () => {
         })
       );
 
-      addNotification(
-        "success",
-        "Tạo thành công",
-        `Task đã được tạo thành công.`
-      );
+      toast.success("Task đã được tạo thành công.");
       dispatch(fetchTasks()); // Fetch tasks again to update the list
 
       // Clear the form and close modal

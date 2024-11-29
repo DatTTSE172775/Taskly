@@ -2,11 +2,11 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useNotification } from "@/hooks/useNotification";
 import { AppDispatch } from "@/store";
 import { fetchTasks, updateTask } from "@/store/actions/taskActions";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 interface UpdateTaskFormProps {
   task: any; // Task hiện tại
@@ -15,7 +15,6 @@ interface UpdateTaskFormProps {
 
 const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({ task, onClose }) => {
   const dispatch: AppDispatch = useDispatch();
-  const { addNotification } = useNotification();
 
   // Form state với dữ liệu của task hiện tại
   const [formData, setFormData] = useState({
@@ -41,11 +40,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({ task, onClose }) => {
     try {
       await dispatch(updateTask(task._id, formData)); // Gửi API update
       // Thêm thông báo rằng task đang được chỉnh sửa
-      addNotification(
-        "success",
-        "Cập nhật thành công",
-        `Task đã được chỉnh sửa và cập nhật.`
-      );
+      toast.success("Task đã được chỉnh sửa và cập nhật.");
       await dispatch(fetchTasks()); // Fetch lại danh sách task
       onClose(); // Đóng form sau khi cập nhật
     } catch (error) {

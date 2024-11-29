@@ -3,11 +3,11 @@
 
 import LoadingOverlay from "@/components/ui/loading";
 import { useLoading } from "@/hooks/useLoading";
-import { useNotification } from "@/hooks/useNotification";
 import { AppDispatch, RootState } from "@/store";
 import { deleteTask, fetchTasks, Task } from "@/store/actions/taskActions";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import TaskCard from "../card/TaskCard";
 import UpdateTaskForm from "../modifyTasks/UpdateTaskForm";
 
@@ -18,9 +18,6 @@ const TaskList: React.FC = () => {
   const { tasks, loading, error } = useSelector(
     (state: RootState) => state.tasks
   );
-
-  // Notification hook
-  const { addNotification } = useNotification();
 
   //Loading hoook
   const { isLoading, startLoading, stopLoading } = useLoading();
@@ -58,20 +55,12 @@ const TaskList: React.FC = () => {
     try {
       await dispatch(deleteTask(taskToDelete._id!.toString()));
       // Thêm thông báo thành công
-      addNotification(
-        "success",
-        "Xóa thành công",
-        `Task "${taskToDelete.title}" đã được xóa.`
-      );
+      toast.success(`Task "${taskToDelete.title}" đã được xóa.`);
       setTaskToDelete(null);
       setIsDeleteModalOpen(false);
     } catch {
       // Thêm thông báo lỗi
-      addNotification(
-        "error",
-        "Xóa thất bại",
-        `Xóa task "${taskToDelete.title} thất bại".`
-      );
+      toast.error(`Xóa task "${taskToDelete.title} thất bại".`);
     }
   };
 

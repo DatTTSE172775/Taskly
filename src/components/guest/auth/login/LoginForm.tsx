@@ -3,7 +3,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNotification } from "@/hooks/useNotification";
 import React, { useState } from "react";
 
 export default function LoginForm() {
@@ -13,7 +12,6 @@ export default function LoginForm() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addNotification } = useNotification();
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,18 +33,8 @@ export default function LoginForm() {
 
       // Simulate API response delay
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      addNotification(
-        "success",
-        "Đăng nhập thành công",
-        `Bạn đã đăng nhập thành công với tài khoản ${formData.username}.`
-      );
     } catch (error) {
-      addNotification(
-        "error",
-        "Đăng nhập thất bại",
-        `Lỗi xảy ra khi đăng nhập: ${(error as any).message}. Vui lòng thử lại.`
-      );
+      console.error("Đăng nhập thất bại: ", error);
     } finally {
       setIsSubmitting(false);
     }
