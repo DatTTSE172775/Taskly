@@ -1,6 +1,7 @@
 import User from "@/models/User";
 import dbConnect from "@/utils/dbConnect";
 import bcrypt from "bcrypt";
+import { serialize } from "cookie";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
@@ -45,14 +46,26 @@ export async function POST(req: Request) {
     // creare JWT token
     const token = jwt.sign(payload, secret, { expiresIn: "1d" });
 
-    // return token
-    return NextResponse.json({
+    // set token to cookie
+    const cookie = serialize("authToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict", // Prevent CSRF attacks
+      maxAge: 60 * 60 * 24, // 1 day
+      path: "/", // Cookie available for all routes
+    });
+
+    // set cookie to response header
+    const response = NextResponse.json({
       success: true,
       data: {
-        token,
         username: user.username,
       },
     });
+    response.headers.set("Set-Cookie", cookie);
+
+    // return token
+    return response;
   } catch (error) {
     const errorMessage =
       error instanceof Error

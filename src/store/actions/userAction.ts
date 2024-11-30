@@ -1,3 +1,4 @@
+import { getCookie } from "cookies-next/client";
 import { toast } from "react-toastify";
 import { AppDispatch } from "../index";
 
@@ -7,11 +8,15 @@ export const fetchUserInfo =
     try {
       dispatch({ type: "FETCH_USER_INFO_REQUEST" });
 
-      const response = await fetch(`/api/users/${username}`);
+      const token = getCookie("authToken");
+
+      const response = await fetch(`/api/users/${username}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
-
-      console.log("API Response:", data);
 
       if (!response.ok || !data.success) {
         throw new Error(data.error || "Lấy thông tin người dùng thất bại");
@@ -30,22 +35,25 @@ export const fetchUserInfo =
   };
 
 // api for logout
-export const logoutUser = () => (dispatch: AppDispatch) => {
+export const logoutUser = () => async (dispatch: AppDispatch) => {
   try {
-    // Xóa thông tin người dùng khỏi localStorage
-    localStorage.removeItem("authToken");
+    const response = await fetch("/api/auth/logout", {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Không thể đăng xuất!");
+    }
+
     localStorage.removeItem("username");
 
     // Xóa thông tin người dùng khỏi Redux Store
     dispatch({ type: "LOGOUT_USER" });
 
-    // Hiển thị thông báo
-    toast.success("Đã đăng xuất thành công!");
-
     // Chuyển hướng về trang chính
     setTimeout(() => {
       window.location.href = "/";
-    }, 1000);
+    }, 100);
   } catch (error) {
     toast.error((error as Error).message);
   }

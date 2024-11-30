@@ -1,37 +1,33 @@
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
-// Define the secret key for JWT
-const SECRET_KEY = process.env.JWT_SECRET ?? "";
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
 
-// Middleware function
-export function middleware(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.split(" ")[1]; // Extract token from Authorization header
-
-  if (!token) {
-    return NextResponse.json(
-      { success: false, error: "Lỗi xác thực: Toke không tồn tại" },
-      { status: 401 }
-    );
-  }
-
+export async function middleware(req: NextRequest) {
   try {
-    // Verify the token
-    const decoded = jwt.verify(token, SECRET_KEY);
-    // Attach user info to the request (if needed)
-    req.headers.set("user", JSON.stringify(decoded));
-    return NextResponse.next(); // Allow request to proceed
-  } catch {
+    // Log bước lấy token từ cookies
+    const token = req.cookies.get("authToken")?.value;
+
+    if (!token) {
+      const loginUrl = new URL("/login", req.url);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Xác thực token
+    const { payload } = await jwtVerify(token, SECRET_KEY);
+
+    req.headers.set("user", JSON.stringify(payload));
+
+    return NextResponse.next(); // Cho phép request tiếp tục
+  } catch (err) {
+    console.log("Middleware Error:", err);
     return NextResponse.json(
-      { success: false, error: "Lỗi xác thực: Token không hợp lệ" },
+      { success: false, error: "Token không hợp lệ" },
       { status: 401 }
     );
   }
 }
 
-// Protect specific routes
 export const config = {
-  matcher: [
-    // "/api/tasks/:path*", // Protect tasks APIs
-  ],
+  matcher: ["/tasks", "/settings", "/api/users/:path*", "/api/tasks/:path*"], // Middleware áp dụng cho các endpoint này
 };

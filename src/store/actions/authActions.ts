@@ -57,16 +57,15 @@ export const loginUser =
         throw new Error(data.error || "Đăng nhập thất bại");
       }
 
-      setTimeout(() => {
-        window.location.href = "/tasks";
-      }, 1500);
-
       dispatch({ type: "LOGIN_SUCCESS", payload: data.data });
       toast.success("Đăng nhập thành công!");
 
       // Lưu token vào localStorage
-      localStorage.setItem("authToken", data.data.token);
       localStorage.setItem("username", data.data.username);
+
+      setTimeout(() => {
+        window.location.href = "/tasks";
+      }, 1500);
     } catch (error) {
       dispatch({
         type: "LOGIN_FAILURE",

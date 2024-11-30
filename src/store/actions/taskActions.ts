@@ -1,3 +1,4 @@
+import { getCookie } from "cookies-next";
 import { AppDispatch } from "../index";
 
 export interface Task {
@@ -12,7 +13,14 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "FETCH_TASKS_REQUEST" });
 
-    const response = await fetch("/api/tasks");
+    const token = getCookie("authToken");
+
+    const response = await fetch("/api/tasks", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -40,10 +48,13 @@ export const addTask = (task: Task) => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "ADD_TASK_REQUEST" });
 
+    const token = getCookie("authToken");
+
     const response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(task),
     });
@@ -66,10 +77,13 @@ export const updateTask =
     try {
       dispatch({ type: "UPDATE_TASK_REQUEST" });
 
+      const token = getCookie("authToken");
+
       const response = await fetch(`/api/tasks/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updates),
       });
@@ -100,8 +114,13 @@ export const deleteTask = (id: string) => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "DELETE_TASK_REQUEST" });
 
+    const token = getCookie("authToken");
+
     const response = await fetch(`/api/tasks/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {

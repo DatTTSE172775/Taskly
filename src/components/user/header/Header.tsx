@@ -11,12 +11,13 @@ import { useDispatch, useSelector } from "react-redux";
 export default function Header() {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector((state: any) => state.user.data);
-  console.log("User data from Redux:", user);
 
   useEffect(() => {
     const username = localStorage.getItem("username"); // Lấy username từ localStorage
     if (username) {
       dispatch(fetchUserInfo(username)); // Gọi API để lấy thông tin user
+    } else {
+      console.error("Username not found in localStorage");
     }
   }, [dispatch]);
 
