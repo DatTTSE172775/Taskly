@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 // Define the secret key for JWT
-const SECRET_KEY = process.env.JWT_SECRET || "";
+const SECRET_KEY = process.env.JWT_SECRET ?? "";
 
 // Middleware function
 export function middleware(req: NextRequest) {
@@ -32,6 +32,6 @@ export function middleware(req: NextRequest) {
 // Protect specific routes
 export const config = {
   matcher: [
-    "/api/tasks/:path*", // Protect tasks APIs
+    // "/api/tasks/:path*", // Protect tasks APIs
   ],
 };
