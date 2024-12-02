@@ -33,15 +33,22 @@ const TaskAddButton: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.title.trim()) {
+      toast.error("Tiêu đề không được để trống");
+      return;
+    }
+
     //call api addTask through Redux
     try {
       await dispatch(
         addTask({
-          title: formData.title,
-          description: formData.description,
+          title: formData.title.trim(),
+          description: formData.description.trim(),
           status: formData.status,
         })
       );
+
+      console.log("Form data trước khi submit:", formData);
 
       toast.success("Task đã được tạo thành công.");
       dispatch(fetchTasks()); // Fetch tasks again to update the list

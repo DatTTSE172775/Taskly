@@ -13,13 +13,16 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "FETCH_TASKS_REQUEST" });
 
-    const token = getCookie("authToken");
-
     const response = await fetch("/api/tasks", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json", // Đảm bảo gửi đúng header
       },
     });
+
+    if (response.status === 401) {
+      console.warn("Không xác thực được. Người dùng cần đăng nhập lại.");
+      throw new Error("Unauthorized. Vui lòng đăng nhập lại.");
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -28,7 +31,7 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
     const data = await response.json();
 
     if (!data.success || !Array.isArray(data.data)) {
-      throw new Error("API response is invalid or data is not an array");
+      throw new Error("API response is invalid hoặc data không phải là mảng");
     }
 
     // Chỉ gán data.data vào payload
@@ -37,6 +40,7 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
       payload: data.data,
     });
   } catch (error) {
+    console.error("Lỗi khi gọi API fetchTasks:", error);
     dispatch({
       type: "FETCH_TASKS_FAILURE",
       payload: (error as Error).message,
@@ -48,23 +52,33 @@ export const addTask = (task: Task) => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "ADD_TASK_REQUEST" });
 
-    const token = getCookie("authToken");
-
     const response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json", // Chỉ cần định nghĩa loại nội dung
       },
       body: JSON.stringify(task),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Lỗi từ API:", errorData);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
+
+    if (!data.success) {
+      console.error("Lỗi từ API:", data.error);
+      throw new Error(data.error || "Failed to add task");
+    }
 
     dispatch({
       type: "ADD_TASK_SUCCESS",
-      payload: data.data,
+      payload: data.data, // Task được trả về từ API
     });
   } catch (error) {
+    console.error("Lỗi khi thêm task:", error);
     dispatch({
       type: "ADD_TASK_FAILURE",
       payload: (error as Error).message,

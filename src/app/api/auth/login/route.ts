@@ -64,7 +64,6 @@ export async function POST(req: Request) {
     });
     response.headers.set("Set-Cookie", cookie);
 
-    // return token
     return response;
   } catch (error) {
     const errorMessage =
