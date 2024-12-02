@@ -1,4 +1,3 @@
-import { getCookie } from "cookies-next";
 import { AppDispatch } from "../index";
 
 export interface Task {
@@ -91,13 +90,10 @@ export const updateTask =
     try {
       dispatch({ type: "UPDATE_TASK_REQUEST" });
 
-      const token = getCookie("authToken");
-
       const response = await fetch(`/api/tasks/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updates),
       });
@@ -128,12 +124,10 @@ export const deleteTask = (id: string) => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "DELETE_TASK_REQUEST" });
 
-    const token = getCookie("authToken");
-
     const response = await fetch(`/api/tasks/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
 

@@ -1,6 +1,6 @@
 import Task from "@/models/Task";
 import dbConnect from "@/utils/dbConnect";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
   id: string;
@@ -46,7 +46,7 @@ export async function GET(
 
 // API PUT: Cập nhật Task theo ID
 export async function PUT(
-  request: Request,
+  req: NextRequest,
   context: { params: Promise<Params> }
 ) {
   try {
@@ -60,11 +60,27 @@ export async function PUT(
     }
 
     await dbConnect();
-    const body = await request.json();
-    const updatedTask = await Task.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true,
-    });
+
+    // Lấy user từ cookies
+    const userCookie = req.cookies.get("userPayload")?.value;
+
+    if (!userCookie) {
+      throw new Error("Không tìm thấy thông tin người dùng trong cookies.");
+    }
+
+    const user = JSON.parse(userCookie);
+    const userId = user.id;
+
+    const body = await req.json();
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      { _id: id, userId },
+      body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!updatedTask) {
       return NextResponse.json(
@@ -88,7 +104,7 @@ export async function PUT(
 
 // API DELETE: Xóa Task theo ID
 export async function DELETE(
-  request: Request,
+  req: NextRequest,
   context: { params: Promise<Params> }
 ) {
   try {
@@ -102,11 +118,25 @@ export async function DELETE(
     }
 
     await dbConnect();
-    const deletedTask = await Task.findByIdAndDelete(id);
+
+    // Lấy user từ cookies
+    const userCookie = req.cookies.get("userPayload")?.value;
+
+    if (!userCookie) {
+      throw new Error("Không tìm thấy thông tin người dùng trong cookies.");
+    }
+
+    const user = JSON.parse(userCookie);
+    const userId = user.id;
+
+    const deletedTask = await Task.findByIdAndDelete({ _id: id, userId });
 
     if (!deletedTask) {
       return NextResponse.json(
-        { success: false, error: `Task với ID ${id} không tồn tại.` },
+        {
+          success: false,
+          error: `Task với ID ${id} không tồn tại hoặc không thuộc về bạn.`,
+        },
         { status: 404 }
       );
     }
