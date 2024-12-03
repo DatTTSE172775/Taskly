@@ -16,13 +16,44 @@ export async function GET(req: NextRequest) {
     const user = JSON.parse(userCookie);
     const userId = user.id;
 
-    const tasks = await Task.find({ userId });
+    // get query params from request
+    const url = new URL(req.url);
+    const status = url.searchParams.get("status");
+    const priority = url.searchParams.get("priority");
+    const sortBy = url.searchParams.get("sortBy") ?? "createdAt";
+    const order = url.searchParams.get("order") ?? "desc";
+    const page = parseInt(url.searchParams.get("page") ?? "1", 10);
+    const limit = parseInt(url.searchParams.get("limit") ?? "10", 10);
 
-    if (!Array.isArray(tasks)) {
-      throw new Error("Database did not return an array");
-    }
+    // create filter object
+    const filter: { userId: string; status?: string; priority?: string } = {
+      userId,
+    };
+    if (status) filter.status = status;
+    if (priority) filter.priority = priority;
 
-    return NextResponse.json({ success: true, data: tasks });
+    // calcuslate skip page
+    const skip = (page - 1) * limit;
+
+    // get tasks from database
+    const tasks = await Task.find(filter)
+      .sort({ [sortBy]: order === "desc" ? -1 : 1 })
+      .skip(skip)
+      .limit(limit);
+
+    // calculate total tasks
+    const totalTasks = await Task.countDocuments(filter);
+
+    return NextResponse.json({
+      success: true,
+      data: tasks,
+      pagination: {
+        total: totalTasks,
+        page,
+        limit,
+        totalPages: Math.ceil(totalTasks / limit),
+      },
+    });
   } catch (error) {
     const errorMessage =
       error instanceof Error
