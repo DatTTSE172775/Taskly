@@ -86,27 +86,60 @@ export async function POST(req: NextRequest) {
     }
 
     // Lấy dữ liệu từ body request
-    const { title, description, status } = await req.json();
+    const {
+      title,
+      description,
+      status,
+      priority,
+      dueDate,
+      progress,
+      subTasks,
+      assignees,
+      tags,
+      comments,
+      attachments,
+      customeFields,
+      visibility,
+    } = await req.json();
 
     // Kiểm tra xem các trường có hợp lệ không
     if (!title || typeof title !== "string") {
-      throw new Error("Tiêu đề (title) là bắt buộc và phải là chuỗi.");
+      throw new Error("Tiêu đề (title) là bắt buộc và phải họpư lệ.");
     }
-
-    if (description && typeof description !== "string") {
-      throw new Error("Mô tả (description) phải là chuỗi nếu được cung cấp.");
-    }
-
     const validStatuses = ["Pending", "In Progress", "Completed"];
-    if (!validStatuses.includes(status)) {
+    if (status && !validStatuses.includes(status)) {
       throw new Error("Trạng thái (status) không hợp lệ.");
+    }
+
+    const validPriorities = ["Low", "Medium", "High", "Critical"];
+    if (priority && !validPriorities.includes(priority)) {
+      throw new Error("Độ ưu tiên (priority) không hợp lệ.");
+    }
+
+    if (progress && (progress < 0 || progress > 100)) {
+      throw new Error("Tiến độ (progress) phải nằm trong khoảng 0 - 100.");
+    }
+
+    const dueDateValue = dueDate ? new Date(dueDate) : undefined;
+    if (dueDateValue && isNaN(new Date(dueDateValue).getTime())) {
+      throw new Error("Ngày hết hạn (dueDate) không hợp lệ.");
     }
 
     // Tạo task mới trong database
     const newTask = await Task.create({
       title: title.trim(),
       description: description ? description.trim() : "",
-      status,
+      status: status ?? "Pending",
+      priority: priority ?? "Medium",
+      dueDate: dueDateValue,
+      progress: progress ?? 0,
+      subTasks: subTasks ?? [],
+      assignees: assignees ?? [],
+      tags: tags ?? [],
+      comments: comments ?? [],
+      attchments: attachments ?? [],
+      customFields: customeFields ?? [],
+      visibility: visibility ?? "Private",
       userId,
     });
 
@@ -116,9 +149,6 @@ export async function POST(req: NextRequest) {
       error instanceof Error
         ? `Lỗi khi tạo công việc mới: ${error.message}`
         : "Đã xảy ra lỗi không xác định.";
-
-    console.error(errorMessage);
-
     return NextResponse.json(
       { success: false, error: errorMessage },
       { status: 400 }
