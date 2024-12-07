@@ -5,6 +5,9 @@ export interface Task {
   title: string;
   description: string;
   status: "Pending" | "In Progress" | "Completed";
+  priority: "Low" | "Medium" | "High" | "Critical";
+  dueDate?: string;
+  tags?: string[];
   createdAt?: string;
 }
 
@@ -14,7 +17,7 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
 
     const response = await fetch("/api/tasks", {
       headers: {
-        "Content-Type": "application/json", // Đảm bảo gửi đúng header
+        "Content-Type": "application/json",
       },
     });
 
@@ -50,6 +53,8 @@ export const fetchTasks = () => async (dispatch: AppDispatch) => {
 export const addTask = (task: Task) => async (dispatch: AppDispatch) => {
   try {
     dispatch({ type: "ADD_TASK_REQUEST" });
+
+    console.log("🚀 ~ addTask ~ task:", task);
 
     const response = await fetch("/api/tasks", {
       method: "POST",

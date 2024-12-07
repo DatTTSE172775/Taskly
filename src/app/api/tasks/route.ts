@@ -39,7 +39,8 @@ export async function GET(req: NextRequest) {
     const tasks = await Task.find(filter)
       .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .select("-__v -proress -assinees");
 
     // calculate total tasks
     const totalTasks = await Task.countDocuments(filter);
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     // Kiểm tra xem các trường có hợp lệ không
     if (!title || typeof title !== "string") {
-      throw new Error("Tiêu đề (title) là bắt buộc và phải họpư lệ.");
+      throw new Error("Tiêu đề (title) là bắt buộc và phải hợp lệ.");
     }
     const validStatuses = ["Pending", "In Progress", "Completed"];
     if (status && !validStatuses.includes(status)) {
@@ -120,8 +121,9 @@ export async function POST(req: NextRequest) {
       throw new Error("Tiến độ (progress) phải nằm trong khoảng 0 - 100.");
     }
 
-    const dueDateValue = dueDate ? new Date(dueDate) : undefined;
-    if (dueDateValue && isNaN(new Date(dueDateValue).getTime())) {
+    const dueDateValue = dueDate ? new Date(dueDate) : null;
+    console.log("🚀 ~ POST ~ dueDateValue:", dueDateValue);
+    if (dueDateValue && isNaN(dueDateValue.getTime())) {
       throw new Error("Ngày hết hạn (dueDate) không hợp lệ.");
     }
 

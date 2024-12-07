@@ -15,10 +15,10 @@ const TaskSchema = new Schema(
       enum: ["Low", "Medium", "High", "Critical"],
       default: "Medium",
     },
-    dugeDate: { type: Date },
-    proress: { type: Number, min: 0, max: 0, default: 0 },
+    dueDate: { type: Date },
+    progress: { type: Number, min: 0, max: 0, default: 0 },
     subTasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
-    assinees: [
+    assignees: [
       {
         userId: { type: Schema.Types.ObjectId, ref: "User" },
         role: {

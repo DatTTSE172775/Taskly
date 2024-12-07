@@ -28,7 +28,7 @@ const TaskAddModal: React.FC<TaskAddModalProps> = ({ onClose }) => {
         ref={modalRef}
         className={styles["task-modal"]} // Sử dụng class từ module
       >
-        <h3 className={styles["task-title"]}>Add New Task</h3>
+        <h3 className={styles["task-title"]}>Thêm Tasks mới</h3>
         <form onSubmit={handleSubmit}>
           {/* Title */}
           <div className={styles["form-group"]}>
@@ -79,6 +79,55 @@ const TaskAddModal: React.FC<TaskAddModalProps> = ({ onClose }) => {
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>
             </select>
+          </div>
+
+          {/* Priority */}
+          <div className={styles["form-group"]}>
+            <label htmlFor="priority" className={styles["form-label"]}>
+              Priority
+            </label>
+            <select
+              id="priority"
+              name="priority"
+              value={formData.priority}
+              onChange={handleInputChange}
+              className={styles["select"]}
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+
+          {/* Due Date */}
+          <div className={styles["form-group"]}>
+            <label htmlFor="dueDate" className={styles["form-label"]}>
+              Due Date
+            </label>
+            <input
+              id="dueDate"
+              name="dueDate"
+              type="date"
+              value={formData.dueDate || ""}
+              onChange={handleInputChange}
+              className={styles["input"]}
+            />
+          </div>
+
+          {/* Tags */}
+          <div className={styles["form-group"]}>
+            <label htmlFor="tags" className={styles["form-label"]}>
+              Tags
+            </label>
+            <Input
+              id="tags"
+              name="tags"
+              type="text"
+              value={formData.tags}
+              onChange={handleInputChange}
+              placeholder="Enter tags separated by comma"
+            />
           </div>
 
           {/* Buttons */}

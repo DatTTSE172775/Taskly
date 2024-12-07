@@ -9,6 +9,9 @@ export const useAddTaskForm = (onClose: () => void) => {
     title: "",
     description: "",
     status: "Pending" as "Pending" | "In Progress" | "Completed",
+    priority: "Medium" as "Low" | "Medium" | "High" | "Critical",
+    dueDate: "",
+    tags: [] as string[],
   });
 
   const dispatch: AppDispatch = useDispatch();
@@ -22,7 +25,14 @@ export const useAddTaskForm = (onClose: () => void) => {
       e.target instanceof HTMLSelectElement
     ) {
       const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (name === "tags") {
+        setFormData((prev) => ({
+          ...prev,
+          tags: value.split(",").map((tag) => tag.trim()),
+        }));
+      } else {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
     }
   };
 
@@ -41,6 +51,9 @@ export const useAddTaskForm = (onClose: () => void) => {
         title: "",
         description: "",
         status: "Pending" as "Pending" | "In Progress" | "Completed",
+        priority: "Medium" as "Low" | "Medium" | "High" | "Critical",
+        dueDate: "",
+        tags: [],
       });
       onClose();
     } catch (error) {
